@@ -71,7 +71,32 @@ and how to install it.
 ## Project Implementation:
  #### The effect of the P, I, D component of the PID algorithm 
 
-PID (Proportional Integral Derivative) controller is widely used control mechanism in different applications. 
+A proportional–integral–derivative controller (PID controller or three term controller) is a control loop feedback mechanism widely used in industrial control systems and a variety of other applications requiring continuously modulated control. A PID controller continuously calculates an error value as the difference between a desired setpoint (SP) and a measured process variable (PV) and applies a correction based on proportional, integral, and derivative terms (denoted P, I, and D respectively) which give the controller its name.
+
+The main aim  of our controller is to give steering and throttle commands to drive safely and as fast as possible around the circuit. 
+Cross Track Error, or simply CTE, is the distance between the car's actual position and the position it should have, which is the position closest to the car on a line between the waypoints.
+
+P (Proportional control):
+
+The P or Proportional , controller had the most directly observable effect on the car's behavior. It causes the car to steer proportional (and opposite) to the car's distance from the lane center (which is the CTE) - if the car is far to the right it steers hard to the left, if it's slightly to the left it steers slightly to the right.
+The proportional term given by = Kp * crosstrack_error
+For example, if the error is large and positive, the control output will be proportionately large and positive. If the error is small the more conservative the response.
+
+I (Integrate control):
+
+The term I considers all past values of the CTE and it is measured by the integral or the sum of the crosstrack errors over time. The reason we need it is that there’s likely residual error after applying the proportional control. This ends up causing a bias over a long period of time that avoids the car to get in the exact trajectory. This integral term seeks to eliminate this residual error by adding a historic cumulative value of the error.
+The I component particularly serves to reduce the CTE around curves.
+
+The integral term is given by  Ki * integral_error
+
+D (Differential) :
+
+The term D is the best estimate of the future trend of the error, based on its current rate of change. When the car has turned enough to reduce the crosstrack error,
+D will inform the controller that the error has already reduced. A properly tuned D parameter will cause the car to approach the center line smoothly without ringing. 
+If this is too large, then there will be  overdamping which means it will take longer to reach the desired goal.
+
+The derivative term is given by - Kd * derivative_error
+
 First i started with P value and I D controller values as zeros. Then i figureout the P value to get reasonable frequency. Then i changed the D controller value as 1 then increased with different trails. In this case car went around track but in some cases like in bridge and sharp turnings i see some oscillations. 
 Then finally i added I controller with little value 0.001 then car was significantly center of the track. After the many trails with the paramter values i figuredout proper values for P , I and D.
 The controller implemented very easyily but the paramter tuning takes more time to finish the track successfully with out any deviations. 
